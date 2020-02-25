@@ -408,7 +408,7 @@ services:
             - plex
 
 	    # ----------------------------------------
-        # MYSQL
+            # MYSQL
 	    # ----------------------------------------
 	    mysql:
 	        image: linuxserver/mysql
@@ -422,37 +422,30 @@ services:
 	        volumes:
 	            - 'mysql:/var/lib/mysql'
 
-        # ----------------------------------------
-        # HOME ASSISTANT
+            # ----------------------------------------
+            # HOME ASSISTANT
 	    # ----------------------------------------
 	    Homeassistant:
 	        image: linuxserver/homeassistant
 	        container_name: homeassistant
 	        restart: unless-stopped
 	        network_mode: "bridge"
-            privilegded:
-            cpus:
-                 - 2
-             device:
-                 - /dev/tty/ACM0
-	        ports:
-	            - '${IP_ADDRESS}:8123:8123'
-                - '${IP_ADDRESS}:1883:1883'
-	       environment:
-                - PUID=${PUID}
-                - PGID=${PGID}
-           volumes:
-             - '${ECloud}:/config'
-             - '/etc/localtime:/etc/localtime:ro'
+            	privilegded:
+           	cpus:
+                 	- 2
+           	device:
+                 	- /dev/tty/ACM0
+	   	ports:
+	        	- '${IP_ADDRESS}:8123:8123'
+                	- '${IP_ADDRESS}:1883:1883'
+	   	environment:
+                	- PUID=${PUID}
+                	- PGID=${PGID}
+           	volumes:
+             		- '${ECloud}:/config'
+             		- '/etc/localtime:/etc/localtime:ro'
 
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-        volumes:
-
-            - '${ECloud}:/config'
-            - '/etc/localtime:/etc/localtime:ro'
-
+       
         # ----------------------------------------
         # WEBSERVER
 	    # ----------------------------------------
@@ -472,13 +465,13 @@ services:
 	            - PGID=${PGID}
 	            - EMAIL=edo.rexy@gmail.com
 	            - URL=edoflix.dnsabr.com
-                - SUBDOMAINS=*., sub, sub1, sub2, etc
-                - validation=http
+                    - SUBDOMAINS=*., sub, sub1, sub2, etc
+                    - validation=http
 	        volumes:
 	            - 'letsencrypt_config:/config’
 
 	    # ----------------------------------------
-        # NextCloud
+            # NextCloud
 	    # ----------------------------------------
 	    Nextcloud:
 	        image: linuxserver/nextcloud
