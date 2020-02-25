@@ -406,3 +406,92 @@ services:
             - './plex/Library/Application Support/Plex Media Server/Logs:/logs:ro'
         depends_on:
             - plex
+
+	    # ----------------------------------------
+        # MYSQL
+	    # ----------------------------------------
+	    mysql:
+	        image: linuxserver/mysql
+	        container_name: mysql
+	        restart: unless-stopped
+	        network_mode: "bridge"
+	        ports:
+	            - '${IP_ADDRESS}:3306:3306'
+	        environment:
+		            - PASSWORD=${PWD}
+	        volumes:
+	            - 'mysql:/var/lib/mysql'
+
+        # ----------------------------------------
+        # HOME ASSISTANT
+	    # ----------------------------------------
+	    Homeassistant:
+	        image: linuxserver/homeassistant
+	        container_name: homeassistant
+	        restart: unless-stopped
+	        network_mode: "bridge"
+            privilegded:
+            cpus:
+                 - 2
+             device:
+                 - /dev/tty/ACM0
+	        ports:
+	            - '${IP_ADDRESS}:8123:8123'
+                - '${IP_ADDRESS}:1883:1883'
+	       environment:
+                - PUID=${PUID}
+                - PGID=${PGID}
+           volumes:
+             - '${ECloud}:/config'
+             - '/etc/localtime:/etc/localtime:ro'
+
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+        volumes:
+
+            - '${ECloud}:/config'
+            - '/etc/localtime:/etc/localtime:ro'
+
+        # ----------------------------------------
+        # WEBSERVER
+	    # ----------------------------------------
+	    webserver:
+	        image: linuxserver/letsencrypt
+	        container_name: letsencrypt
+	        restart: unless-stopped
+	        network_mode: "bridge"
+	        ports:
+	            - '${IP_ADDRESS}:80:80'
+	            - '${IP_ADDRESS}:443:443'
+	        cap_add:
+	            - NET_ADMIN
+	        environment:
+	            - TZ=${TZ}
+	            - PUID=${PUID}
+	            - PGID=${PGID}
+	            - EMAIL=edo.rexy@gmail.com
+	            - URL=edoflix.dnsabr.com
+                - SUBDOMAINS=*., sub, sub1, sub2, etc
+                - validation=http
+	        volumes:
+	            - 'letsencrypt_config:/config’
+
+	    # ----------------------------------------
+        # NextCloud
+	    # ----------------------------------------
+	    Nextcloud:
+	        image: linuxserver/nextcloud
+	        container_name: nextcloud
+	        restart: unless-stopped
+	        network_mode: "bridge"
+	        ports:
+	            - '${IP_ADDRESS}:81:80'
+                - '${IP_ADDRESS}:3442:443'
+	        link:
+	            - mysql:mysql
+	        volumes:
+	            - ‘nextcloud:/var/www/html/config'
+	            - '${ECloud}/CloudData:/var/www/html/data'
+	
+
