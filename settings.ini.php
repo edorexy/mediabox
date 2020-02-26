@@ -174,7 +174,7 @@ enabled = "true"
 name = "MyPHPAdmin"
 url = "http://locip:80"
 scale = 1
-icon = "muximux-plexivity"
+icon = "muximux-phpAdmin"
 color = "#de7b10"
 enabled = "true"
 
@@ -182,7 +182,7 @@ enabled = "true"
 name = "Home Assistant"
 url = "http://locip:8123"
 scale = 1
-icon = "muximux-plexivity"
+icon = "muximux-HomeAssistant"
 color = "#ak2a34"
 enabled = "true"
 
@@ -190,6 +190,6 @@ enabled = "true"
 name = "NextCloud"
 url = "http://locip:443"
 scale = 1
-icon = "muximux-plexivity"
+icon = "muximux-NexCloud"
 color = "#cc7b90"
 enabled = "true"
