@@ -467,7 +467,7 @@ services:
 	            - PGID=${PGID}
 	            - EMAIL=edo.rexy@gmail.com
 	            - URL=edoflix.dnsabr.com
-                    - SUBDOMAINS=*., sub, sub1, sub2, etc
+                    - SUBDOMAINS=www, api, sub, sub1, sub2, etc
                     - validation=http
 	        volumes:
 	            - './letsencrypt_config:/config’
@@ -481,7 +481,7 @@ services:
 	        restart: unless-stopped
 	        network_mode: "bridge"
 	        ports:
-	            - '${IP_ADDRESS}:81:80'
+	            - '${IP_ADDRESS}:80:80'
                     - '${IP_ADDRESS}:443:443'
 	        link:
 	            - mysql:mysql
@@ -491,6 +491,6 @@ services:
            	   - PGID=${PGID}
             - TZ=${TZ}volumes:
 	            - ‘./nextcloud:/var/www/html/config'
-	            - '${ECloud}/CloudData:/var/www/html/data'
+	            - '/home/rex123/data:/var/www/html/data'
 	
 
