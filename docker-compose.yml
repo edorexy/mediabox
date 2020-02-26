@@ -418,9 +418,11 @@ services:
 	        ports:
 	            - '${IP_ADDRESS}:3306:3306'
 	        environment:
-		            - PASSWORD=${PWD}
+		     - PUID=${PUID}
+                     - PGID=${PGID}
+		     - MYSQL_ROOT_PASSWORD=${PWD}
 	        volumes:
-	            - 'mysql:/var/lib/mysql'
+	            - './mysql:/var/lib/mysql'
 
             # ----------------------------------------
             # HOME ASSISTANT
@@ -442,8 +444,8 @@ services:
                 	- PUID=${PUID}
                 	- PGID=${PGID}
            	volumes:
-             		- '${ECloud}:/config'
-             		- '/etc/localtime:/etc/localtime:ro'
+             		- './homeassistant:/config'
+             		- './etc/localtime:/etc/localtime:ro'
 
        
         # ----------------------------------------
@@ -468,7 +470,7 @@ services:
                     - SUBDOMAINS=*., sub, sub1, sub2, etc
                     - validation=http
 	        volumes:
-	            - 'letsencrypt_config:/config’
+	            - './letsencrypt_config:/config’
 
 	    # ----------------------------------------
             # NextCloud
@@ -480,11 +482,15 @@ services:
 	        network_mode: "bridge"
 	        ports:
 	            - '${IP_ADDRESS}:81:80'
-                - '${IP_ADDRESS}:3442:443'
+                    - '${IP_ADDRESS}:443:443'
 	        link:
 	            - mysql:mysql
-	        volumes:
-	            - ‘nextcloud:/var/www/html/config'
+	        environment:
+		   - TZ=${TZ}
+		   - PUID=${PUID}
+           	   - PGID=${PGID}
+            - TZ=${TZ}volumes:
+	            - ‘./nextcloud:/var/www/html/config'
 	            - '${ECloud}/CloudData:/var/www/html/data'
 	
 
