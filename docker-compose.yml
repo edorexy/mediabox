@@ -423,6 +423,24 @@ services:
 		     - MYSQL_ROOT_PASSWORD=${PWD}
 	        volumes:
 	            - './mysql:/var/lib/mysql'
+		    
+        # ----------------------------------------
+        # PHPADMIN
+	# ----------------------------------------	    
+	
+	phpmyadmin:
+           hostname: phpmyadmin
+           container_name: phpmyadmin
+           image: phpmyadmin/phpmyadmin
+           restart: always
+           links:
+               - mysql:mysql
+           ports:
+     		 - 80:80
+   	 environment:
+     		 - PMA_HOST=mysql
+     		 - MYSQL_ROOT_PASSWORD=${PWD}
+
 
             # ----------------------------------------
             # HOME ASSISTANT
@@ -432,16 +450,18 @@ services:
 	        container_name: homeassistant
 	        restart: unless-stopped
 	        network_mode: "bridge"
-            	privilegded:
-           	cpus:
-                 	- 2
-           	device:
-                 	- /dev/tty/ACM0
+            	privilegded: true
+           	cpus: 2
+           	devices:
+                    - /dev/ttyUSB0:/dev/ttyUSB0
+                    - /dev/ttyUSB1:/dev/ttyUSB1
+                    - /dev/ttyACM0:/dev/ttyACM0
 	   	ports:
 	        	- '${IP_ADDRESS}:8123:8123'
                 	- '${IP_ADDRESS}:1883:1883'
 	   	environment:
-                	- PUID=${PUID}
+                	- TZ=${TZ}
+			- PUID=${PUID}
                 	- PGID=${PGID}
            	volumes:
              		- './homeassistant:/config'
@@ -483,14 +503,14 @@ services:
 	        ports:
 	            - '${IP_ADDRESS}:80:80'
                     - '${IP_ADDRESS}:443:443'
-	        link:
+	        links:
 	            - mysql:mysql
 	        environment:
 		   - TZ=${TZ}
 		   - PUID=${PUID}
            	   - PGID=${PGID}
             - TZ=${TZ}volumes:
-	            - ‘./nextcloud:/var/www/html/config'
+	            - './nextcloud:/var/www/html/config'
 	            - '/home/rex123/data:/var/www/html/data'
 	
 
