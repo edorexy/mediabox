@@ -169,3 +169,27 @@ scale = 1
 icon = "muximux-plexivity"
 color = "#cc7b19"
 enabled = "true"
+
+[PHPADMIN]
+name = "MyPHPAdmin"
+url = "http://locip:80"
+scale = 1
+icon = "muximux-plexivity"
+color = "#de7b10"
+enabled = "true"
+
+[Home Assistant]
+name = "Home Assistant"
+url = "http://locip:8123"
+scale = 1
+icon = "muximux-plexivity"
+color = "#ak2a34"
+enabled = "true"
+
+[NextCloud]
+name = "NextCloud"
+url = "http://locip:443"
+scale = 1
+icon = "muximux-plexivity"
+color = "#cc7b90"
+enabled = "true"
