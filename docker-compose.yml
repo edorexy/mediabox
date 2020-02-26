@@ -440,18 +440,18 @@ services:
      		 - PMA_HOST=mysql
      		 - MYSQL_ROOT_PASSWORD=${PWD}
 
-       # ----------------------------------------
+       	# ----------------------------------------
         # WATCHTOWER
 	# ----------------------------------------	    
-	watchtower:
-           container_name: watchtower
-           image: v2tec/watchtower
-           restart: always
-            network_mode: "bridge"
-	    volumes:
-	        './watchtower:/var/run/docker.sock'
-	    command:
-	       --schedule "0 0 4 * * *" --cleanup
+	#watchtower:
+           #container_name: watchtower
+           #image: v2tec/watchtower
+           #restart: always
+            #network_mode: "bridge"
+	    #volumes:
+	     #   './watchtower:/var/run/docker.sock'
+	   # command:
+	    #   --schedule "0 0 4 * * *" --cleanup
 	       
 
             # ----------------------------------------
