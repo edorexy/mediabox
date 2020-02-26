@@ -427,13 +427,12 @@ services:
         # ----------------------------------------
         # PHPADMIN
 	# ----------------------------------------	    
-	
 	phpmyadmin:
-           hostname: phpmyadmin
            container_name: phpmyadmin
            image: phpmyadmin/phpmyadmin
            restart: always
-           links:
+            network_mode: "bridge"
+	    links:
                - mysql:mysql
            ports:
      		 - 80:80
@@ -441,16 +440,29 @@ services:
      		 - PMA_HOST=mysql
      		 - MYSQL_ROOT_PASSWORD=${PWD}
 
+       # ----------------------------------------
+        # WATCHTOWER
+	# ----------------------------------------	    
+	watchtower:
+           container_name: watchtower
+           image: v2tec/watchtower
+           restart: always
+            network_mode: "bridge"
+	    volumes:
+	        './watchtower:/var/run/docker.sock'
+	    command:
+	       --schedule "0 0 4 * * *" --cleanup
+	       
 
             # ----------------------------------------
             # HOME ASSISTANT
 	    # ----------------------------------------
 	    Homeassistant:
-	        image: linuxserver/homeassistant
+	        image: homeassistant/homeassistant
 	        container_name: homeassistant
 	        restart: unless-stopped
 	        network_mode: "bridge"
-            	privilegded: true
+            	privileged: true
            	cpus: 2
            	devices:
                     - /dev/ttyUSB0:/dev/ttyUSB0
@@ -466,10 +478,11 @@ services:
            	volumes:
              		- './homeassistant:/config'
              		- './etc/localtime:/etc/localtime:ro'
+			 - '/home/rex123/data:/data
 
        
-        # ----------------------------------------
-        # WEBSERVER
+            # ----------------------------------------
+            # WEBSERVER
 	    # ----------------------------------------
 	    webserver:
 	        image: linuxserver/letsencrypt
@@ -509,7 +522,7 @@ services:
 		   - TZ=${TZ}
 		   - PUID=${PUID}
            	   - PGID=${PGID}
-            - TZ=${TZ}volumes:
+                volumes:
 	            - './nextcloud:/var/www/html/config'
 	            - '/home/rex123/data:/var/www/html/data'
 	
