@@ -95,6 +95,7 @@ fi
 # Get info needed for PLEX Official image
 read -r -p "Which PLEX release do you want to run? By default 'public' will be used. (latest, public, plexpass): " pmstag
 read -r -p "If you have PLEXPASS what is your Claim Token from https://www.plex.tv/claim/ (Optional): " pmstoken
+read -r -p "If you have CLOUDFLARE what is your API Token from https://www.cloudflare.com/ (Optional): " apitoken
 # If not set - set PMS Tag to Public:
 if [ -z "$pmstag" ]; then
    pmstag=public
@@ -233,6 +234,7 @@ echo "PMSTAG=$pmstag"
 echo "PMSTOKEN=$pmstoken"
 echo "PORTAINERSTYLE=$portainerstyle"
 echo "VPN_REMOTE=$vpnremote"
+echo "API=$apitoken"
 } >> .env
 echo ".env file creation complete"
 printf "\\n\\n"
