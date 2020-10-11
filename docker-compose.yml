@@ -454,34 +454,7 @@ services:
 	        './watchtower:/var/run/docker.sock'
 	    command:
 	      --schedule "0 0 4 * * *" --cleanup
-	       
-
-            # ----------------------------------------
-            # HOME ASSISTANT
-	    # ----------------------------------------
-	    #Homeassistant:
-	       # image: homeassistant/homeassistant
-	        #container_name: homeassistant
-	        #restart: unless-stopped
-	        #network_mode: "bridge"
-            	#privileged: true
-           	#cpus: 2
-           	#devices:
-                    - /dev/ttyUSB0:/dev/ttyUSB0
-                    - /dev/ttyUSB1:/dev/ttyUSB1
-                    - /dev/ttyACM0:/dev/ttyACM0
-	   	#ports:
-	        	#- '${IP_ADDRESS}:8123:8123'
-                	#- '${IP_ADDRESS}:1883:1883'
-	   	#environment:
-                	#- TZ=${TZ}
-			#- PUID=${PUID}
-                	#- PGID=${PGID}
-           	#volumes:
-             		#- './homeassistant:/config'
-             		#- './etc/localtime:/etc/localtime:ro'
-			# - '/home/rex123/data:/data
-
+	 
        
             # ----------------------------------------
             # TRAEFIK
@@ -532,9 +505,9 @@ networks:
 	        container_name: nextcloud
 	        restart: unless-stopped
 	        network_mode: "bridge"
-	        ports:
-	            - '${IP_ADDRESS}:80:80'
-                    - '${IP_ADDRESS}:443:443'
+	       # ports:
+	         #   - '${IP_ADDRESS}:87:80'
+                  #  - '${IP_ADDRESS}:443:443'
 	        labels:
                   - traefik.enable=true
                   - traefik.http.routers.nextcloud.rule=Host(`cloud.jacobsedo.xyz`)
