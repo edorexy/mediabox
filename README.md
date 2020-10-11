@@ -24,6 +24,7 @@ Components include:
 *   [SickChill TV library manager](https://github.com/SickChill/SickChill)
 *   [Sonarr TV library manager](https://sonarr.tv/)
 *   [Tautulli Plex Media Server monitor](https://github.com/tautulli/tautulli)
++   Traefik, Nextcloud and Cloudflare DNS update
 
 ## Prerequisites
 
