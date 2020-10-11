@@ -504,7 +504,8 @@ networks:
 	        image: linuxserver/nextcloud
 	        container_name: nextcloud
 	        restart: unless-stopped
-	        network_mode: "bridge"
+	        networks:
+                    - web
 	       # ports:
 	         #   - '${IP_ADDRESS}:87:80'
                   #  - '${IP_ADDRESS}:443:443'
