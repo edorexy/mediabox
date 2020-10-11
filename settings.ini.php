@@ -178,9 +178,9 @@ icon = "muximux-phpAdmin"
 color = "#de7b10"
 enabled = "true"
 
-[Home Assistant]
+[Airsonic]
 name = "Home Assistant"
-url = "http://locip:8123"
+url = "http://locip:"
 scale = 1
 icon = "muximux-HomeAssistant"
 color = "#ak2a34"
