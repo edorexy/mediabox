@@ -528,7 +528,7 @@ services:
     image: oznu/cloudflare-ddns:latest
     restart: always
     environment:
-      - API_KEY=85a713a98cb5684d6b2276a2399dc42c12431
+      - API_KEY=${API}
       - ZONE=jacobsedo.xyz
       - SUBDOMAIN=cloud
       - PROXIED=true
