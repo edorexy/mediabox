@@ -194,7 +194,7 @@ services:
         restart: unless-stopped
         network_mode: "bridge"
         ports:
-            - '${IP_ADDRESS}:80:80'
+            - '${IP_ADDRESS}:89:80'
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
@@ -285,6 +285,8 @@ services:
         image: plexinc/pms-docker:${PMSTAG}
         restart: unless-stopped
         network_mode: "host"
+        cpus:
+            - 4096
         ports:
             - '${IP_ADDRESS}:32400:32400/tcp'
             - '${IP_ADDRESS}:3005:3005/tcp'
@@ -416,8 +418,8 @@ services:
 	        restart: unless-stopped
 	        network_mode: "bridge"
 	        ports:
-	            - '${IP_ADDRESS}:3306:3306'
-	        environment:
+	            - '${IP_ADDRESS}:3306:3306
+		environment:
 		     - PUID=${PUID}
                      - PGID=${PGID}
 		     - MYSQL_ROOT_PASSWORD=${PWD}
@@ -435,7 +437,7 @@ services:
 	    links:
                - mysql:mysql
            ports:
-     		 - 80:80
+     		 - 88:80
    	 environment:
      		 - PMA_HOST=mysql
      		 - MYSQL_ROOT_PASSWORD=${PWD}
@@ -443,67 +445,84 @@ services:
        	# ----------------------------------------
         # WATCHTOWER
 	# ----------------------------------------	    
-	#watchtower:
-           #container_name: watchtower
-           #image: v2tec/watchtower
-           #restart: always
-            #network_mode: "bridge"
-	    #volumes:
-	     #   './watchtower:/var/run/docker.sock'
-	   # command:
-	    #   --schedule "0 0 4 * * *" --cleanup
+	watchtower:
+           container_name: watchtower
+           image: v2tec/watchtower
+           restart: always
+            network_mode: "bridge"
+	    volumes:
+	        './watchtower:/var/run/docker.sock'
+	    command:
+	      --schedule "0 0 4 * * *" --cleanup
 	       
 
             # ----------------------------------------
             # HOME ASSISTANT
 	    # ----------------------------------------
-	    Homeassistant:
-	        image: homeassistant/homeassistant
-	        container_name: homeassistant
-	        restart: unless-stopped
-	        network_mode: "bridge"
-            	privileged: true
-           	cpus: 2
-           	devices:
+	    #Homeassistant:
+	       # image: homeassistant/homeassistant
+	        #container_name: homeassistant
+	        #restart: unless-stopped
+	        #network_mode: "bridge"
+            	#privileged: true
+           	#cpus: 2
+           	#devices:
                     - /dev/ttyUSB0:/dev/ttyUSB0
                     - /dev/ttyUSB1:/dev/ttyUSB1
                     - /dev/ttyACM0:/dev/ttyACM0
-	   	ports:
-	        	- '${IP_ADDRESS}:8123:8123'
-                	- '${IP_ADDRESS}:1883:1883'
-	   	environment:
-                	- TZ=${TZ}
-			- PUID=${PUID}
-                	- PGID=${PGID}
-           	volumes:
-             		- './homeassistant:/config'
-             		- './etc/localtime:/etc/localtime:ro'
-			 - '/home/rex123/data:/data
+	   	#ports:
+	        	#- '${IP_ADDRESS}:8123:8123'
+                	#- '${IP_ADDRESS}:1883:1883'
+	   	#environment:
+                	#- TZ=${TZ}
+			#- PUID=${PUID}
+                	#- PGID=${PGID}
+           	#volumes:
+             		#- './homeassistant:/config'
+             		#- './etc/localtime:/etc/localtime:ro'
+			# - '/home/rex123/data:/data
 
        
             # ----------------------------------------
-            # WEBSERVER
+            # TRAEFIK
 	    # ----------------------------------------
-	    webserver:
-	        image: linuxserver/letsencrypt
-	        container_name: letsencrypt
-	        restart: unless-stopped
-	        network_mode: "bridge"
-	        ports:
-	            - '${IP_ADDRESS}:80:80'
-	            - '${IP_ADDRESS}:443:443'
-	        cap_add:
-	            - NET_ADMIN
-	        environment:
-	            - TZ=${TZ}
-	            - PUID=${PUID}
-	            - PGID=${PGID}
-	            - EMAIL=edo.rexy@gmail.com
-	            - URL=edoflix.dnsabr.com
-                    - SUBDOMAINS=www, api, sub, sub1, sub2, etc
-                    - validation=http
-	        volumes:
-	            - './letsencrypt_config:/config’
+services:
+  traefik:
+    image: traefik:v2.0
+    restart: always
+    container_name: traefik
+    ports:
+      - "80:80" # <== http
+      - "8080:8080" # <== :8080 is where the dashboard runs on
+      - "443:443" # <== https
+    command:
+      - --api.insecure=true # <== Enabling insecure api, NOT RECOMMENDED FOR PRODUCTION
+      - --api.dashboard=true # <== Enabling the dashboard to view services, middlewares, routers, etc.
+      - --api.debug=true # <== Enabling additional endpoints for debugging and profiling
+      - --log.level=DEBUG # <== Setting the level of the logs from traefik
+      - --providers.docker=true # <== Enabling docker as the provider for traefik
+      - --providers.docker.exposedbydefault=false # <== Don't expose every container to traefik
+      - --providers.file.filename=/dynamic.yaml # <== Referring to a dynamic configuration file
+      - --providers.docker.network=web # <== Operate on the docker network named web
+      - --entrypoints.web.address=:80 # <== Defining an entrypoint for port :80 named web
+      #- --entrypoints.web-secured.address=:443 # <== Defining an entrypoint for https on port :443 (not really needed)
+      #- --certificatesresolvers.mytlschallenge.acme.tlschallenge=true # <== Enable TLS-ALPN-01 (not really needed)
+      #- --certificatesresolvers.mytlschallenge.acme.email=you@youremail # <== Set your email (not really needed)
+      #- --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json # <== SSL stuff we don't need.
+    volumes:
+      #- ./letsencrypt:/letsencrypt # <== Volume for certs (TLS) (not really needed)
+      - ./var/run/docker.sock:/var/run/docker.sock # <== Volume for docker admin
+      - ./dynamic.yaml:/dynamic.yaml # <== Volume for dynamic conf file, **ref: line 27
+    networks:
+      - web # <== Placing traefik on the network named web, to access containers on this network
+    labels:
+      - "traefik.enable=true" # <== Enable traefik on itself to view dashboard and assign subdomain to$
+      - "traefik.http.routers.api.rule=Host(`monitor.jacobsedo.xyz`)" # <== Setting the domain for the d$
+      - "traefik.http.routers.api.service=api@internal" # <== Enabling the api to be a service to acce$
+
+networks:
+  web:
+    external: true
 
 	    # ----------------------------------------
             # NextCloud
@@ -516,7 +535,11 @@ services:
 	        ports:
 	            - '${IP_ADDRESS}:80:80'
                     - '${IP_ADDRESS}:443:443'
-	        links:
+	        labels:
+                  - traefik.enable=true
+                  - traefik.http.routers.nextcloud.rule=Host(`cloud.jacobsedo.xyz`)
+                  - traefik.http.routers.nextcloud.entrypoints=web
+		links:
 	            - mysql:mysql
 	        environment:
 		   - TZ=${TZ}
@@ -524,6 +547,35 @@ services:
            	   - PGID=${PGID}
                 volumes:
 	            - './nextcloud:/var/www/html/config'
-	            - '/home/rex123/data:/var/www/html/data'
-	
+	            - '/mnt/data/cloud:/var/www/html/data'
 
+    
+services:
+  cloudflare-ddns:
+    image: oznu/cloudflare-ddns:latest
+    restart: always
+    environment:
+      - API_KEY=85a713a98cb5684d6b2276a2399dc42c12431
+      - ZONE=jacobsedo.xyz
+      - SUBDOMAIN=cloud
+      - PROXIED=true
+     
+services:
+  airsonic:
+    image: linuxserver/airsonic
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.airsonic.rule=Host(`music.jacobsedo.xyz`)
+      - traefik.http.routers.airsonic.entrypoints=web
+    container_name: airsonic
+    environment:
+       - TZ=${TZ}
+       - PUID=${PUID}
+       - PGID=${PGID}
+    volumes:
+      - ./Config/AirSonic:/config
+      - /mnt/data/Music:/music
+      - /mnt/data/Music/Podcasts:/podcasts  
+    networks:
+      - web
+    restart: unless-stopped
